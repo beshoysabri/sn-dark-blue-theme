@@ -1,4 +1,7 @@
-# Dark Blue — Standard Notes Theme
+# Dark Blue Theme for Standard Notes
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Standard Notes](https://img.shields.io/badge/Standard%20Notes-Theme-6366f1.svg)](https://standardnotes.com)
 
 A clean, dark theme for [Standard Notes](https://standardnotes.com) that replaces the default purple accent with a sharp blue.
 
