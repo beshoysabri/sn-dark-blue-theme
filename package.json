@@ -1,0 +1,7 @@
+{
+  "name": "sn-dark-blue-theme",
+  "version": "1.0.0",
+  "sn": {
+    "main": "main.css"
+  }
+}
