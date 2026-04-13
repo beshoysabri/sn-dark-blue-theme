@@ -3,20 +3,17 @@
   "name": "Dark Blue",
   "content_type": "SN|Theme",
   "area": "themes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Native Dark theme with a blue accent instead of purple.",
   "url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/main.css",
   "download_url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/main.css",
   "latest_url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/ext.json",
-  "marketing_url": "",
-  "thumbnail_url": "",
-  "valid_until": "2030-01-01",
   "dock_icon": {
     "type": "circle",
     "background_color": "#086DD6",
     "foreground_color": "#ffffff",
     "border_color": "#086DD6"
   },
-  "layerable": true,
-  "no_mobile": false
+  "isDark": true,
+  "statusBar": "dark-content"
 }
