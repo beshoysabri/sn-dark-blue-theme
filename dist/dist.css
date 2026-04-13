@@ -1,0 +1,53 @@
+:root {
+  --sn-stylekit-accessory-tint-color-1: #086DD6;
+  --sn-stylekit-accessory-tint-color-2: #4A9FEC;
+  --sn-stylekit-accessory-tint-color-3: #2B9612;
+  --sn-stylekit-accessory-tint-color-4: #f6a200;
+  --sn-stylekit-accessory-tint-color-5: #F80324;
+  --sn-stylekit-accessory-tint-color-6: #A0A0A0;
+
+  --sn-component-foreground-color: #E8E8E8;
+  --sn-component-background-color: #1E1E1E;
+  --sn-component-foreground-highlight-color: #989898;
+  --sn-component-outer-border-color: #333333;
+  --sn-component-inner-border-color: #E8E8E8;
+
+  --sn-stylekit-shadow-color: rgba(0, 0, 0, 0.35);
+  --sn-stylekit-info-color: #086DD6;
+  --sn-stylekit-info-contrast-color: #FFFFFF;
+  --sn-stylekit-neutral-color: #989898;
+  --sn-stylekit-neutral-contrast-color: #E8E8E8;
+  --sn-stylekit-success-color: #2B9612;
+  --sn-stylekit-success-contrast-color: #FFFFFF;
+  --sn-stylekit-warning-color: #f6a200;
+  --sn-stylekit-warning-contrast-color: #FFFFFF;
+  --sn-stylekit-danger-color: #F80324;
+  --sn-stylekit-danger-contrast-color: #E8E8E8;
+
+  --sn-stylekit-editor-background-color: var(--sn-stylekit-background-color);
+  --sn-stylekit-editor-foreground-color: var(--sn-stylekit-foreground-color);
+  --sn-stylekit-background-color: #1E1E1E;
+  --sn-stylekit-foreground-color: #E8E8E8;
+  --sn-stylekit-border-color: #333333;
+  --sn-stylekit-contrast-background-color: #191919;
+  --sn-stylekit-contrast-foreground-color: #E8E8E8;
+  --sn-stylekit-contrast-border-color: #333333;
+  --sn-stylekit-secondary-background-color: #1E1E1E;
+  --sn-stylekit-secondary-foreground-color: #E8E8E8;
+  --sn-stylekit-secondary-border-color: #333333;
+  --sn-stylekit-secondary-contrast-background-color: #272727;
+  --sn-stylekit-secondary-contrast-foreground-color: #E8E8E8;
+  --sn-stylekit-secondary-contrast-border-color: #E8E8E8;
+  --sn-stylekit-paragraph-text-color: #E8E8E8;
+
+  --sn-desktop-titlebar-bg-color: #1E1E1E;
+  --sn-desktop-titlebar-border-color: #333333;
+  --sn-desktop-titlebar-ui-color: #E8E8E8;
+  --sn-desktop-titlebar-ui-hover-color: #989898;
+
+  --sn-stylekit-scrollbar-track-border-color: #333333;
+  --sn-stylekit-scrollbar-thumb-color: var(--sn-stylekit-info-color);
+  --sn-stylekit-grey-5: #989898;
+  --sn-stylekit-grey-4-opacity-variant: #272727;
+  --navigation-item-selected-background-color: #272727;
+}

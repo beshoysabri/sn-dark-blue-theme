@@ -1,7 +1,12 @@
 {
   "name": "sn-dark-blue-theme",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "main": "dist/dist.css",
   "sn": {
-    "main": "main.css"
+    "main": "dist/dist.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/beshoysabri/sn-dark-blue-theme.git"
   }
 }
