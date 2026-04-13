@@ -3,7 +3,7 @@
   "name": "Dark Blue",
   "content_type": "SN|Theme",
   "area": "themes",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Native Dark theme with a blue accent instead of purple.",
   "url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/dist/dist.css",
   "latest_url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/ext.json",
