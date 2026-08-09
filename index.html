@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dark Blue — a Standard Notes theme</title>
+<meta name="description" content="Native Dark palette with a blue accent instead of purple, and Super notes set in Inter.">
+<meta name="color-scheme" content="dark">
+
+<style>
+/* The page is the product: same font files, same tokens the theme ships. */
+@font-face {
+  font-family: 'InterVariable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('dist/fonts/InterVariable.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'InterVariable';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('dist/fonts/InterVariable-Italic.woff2') format('woff2');
+}
+
+:root {
+  --bg: #0f1011;
+  --surface: #1c1d1e;
+  --border: #181a1b;
+  --fg: #eeeeee;
+  --muted: #7c7c7c;
+  --accent: #086DD6;
+  --accent-dark: #065cb5;
+  --rule: #28292b;
+
+  --sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 4rem 1.5rem 6rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-feature-settings: 'cv05' 1, 'calt' 1;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+main { max-width: 46rem; margin: 0 auto; }
+
+h1 {
+  font-size: 2.1rem;
+  font-weight: 640;
+  letter-spacing: -0.024em;
+  margin: 0 0 .4rem;
+}
+
+.tagline { color: var(--muted); margin: 0 0 .5rem; font-size: 1.05rem; }
+
+.version {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: .1rem .55rem;
+  margin-bottom: 2.75rem;
+}
+
+h2 {
+  font-size: .78rem;
+  font-weight: 620;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 3rem 0 .9rem;
+}
+
+p { margin: 0 0 1rem; }
+a { color: var(--accent); text-decoration-color: var(--accent-dark); text-underline-offset: 2px; }
+
+/* --- install --- */
+.install {
+  display: flex;
+  gap: .5rem;
+  align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: .5rem .5rem .5rem .9rem;
+}
+.install code {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: .82rem;
+  color: var(--fg);
+  overflow-x: auto;
+  white-space: nowrap;
+  align-self: center;
+  padding: .2rem 0;
+}
+button {
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 560;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+  padding: .5rem 1rem;
+  cursor: pointer;
+}
+button:hover { background: var(--accent-dark); }
+button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+ol { padding-left: 1.2rem; color: var(--muted); }
+ol strong { color: var(--fg); font-weight: 560; }
+
+/* --- specimen: a mock Super note, which is also the font smoke test --- */
+.note {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.note-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: .55rem .95rem;
+  font-size: .78rem;
+  color: var(--muted);
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.note-body { padding: 1.1rem 1.25rem 1.4rem; }
+.note-body h3 {
+  font-size: 1.3rem;
+  font-weight: 620;
+  letter-spacing: -0.018em;
+  margin: 0 0 .55rem;
+}
+.note-body p { font-size: .96rem; }
+.note-body ::selection { background: var(--accent); color: var(--fg); }
+.note-body pre {
+  font-family: var(--mono);
+  font-size: .8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .7rem .85rem;
+  overflow-x: auto;
+  margin: 0 0 .9rem;
+}
+.note-body blockquote {
+  margin: 0 0 .9rem;
+  padding-left: .9rem;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* --- palette --- */
+.swatches { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; margin: 0; list-style: none; }
+.swatches li {
+  flex: 1 1 8.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  padding: .6rem .7rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+}
+.chip { display: block; height: 1.6rem; border-radius: 4px; margin-bottom: .5rem; border: 1px solid var(--rule); }
+.swatches b { display: block; font-family: var(--sans); font-size: .78rem; font-weight: 560; color: var(--fg); }
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: .82rem;
+}
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Dark Blue</h1>
+  <p class="tagline">The native Standard Notes Dark palette, with the purple accent swapped for blue — and Super notes set in Inter.</p>
+  <p class="version" id="version">v2.2.0</p>
+
+  <h2>Install</h2>
+  <div class="install">
+    <code id="url">https://beshoysabri.github.io/sn-dark-blue-theme/ext.json</code>
+    <button id="copy" type="button">Copy</button>
+  </div>
+  <ol>
+    <li>Open Standard Notes → <strong>Preferences</strong> → <strong>General</strong> → <strong>Advanced Settings</strong></li>
+    <li>Paste the link under <strong>Install Custom Plugin</strong></li>
+    <li>Pick <strong>Dark Blue</strong> from the Appearance menu</li>
+  </ol>
+
+  <h2>Super notes, in Inter</h2>
+  <div class="note">
+    <div class="note-bar"><span class="dot"></span> Super</div>
+    <div class="note-body">
+      <h3>What actually changed</h3>
+      <p>Every background, border and shadow is identical to the built-in Dark theme. The accent moves from purple to blue, and the text inside Super notes is set in Inter — <em>italics included</em>, since the variable font ships in both styles.</p>
+      <blockquote>Scoping is deliberate: Super is the only Lexical surface in the app, so plaintext and Markdown editors keep the system font.</blockquote>
+      <p>Code keeps its monospace face, because the code rule outranks the body rule on specificity:</p>
+      <pre>:is(#blocks-editor, [data-lexical-editor='true'])
+  :is(pre, code, kbd, samp, [class*='code' i])</pre>
+      <p>If this paragraph renders in Inter, the webfont resolved correctly over Pages — which is the same path the theme uses.</p>
+    </div>
+  </div>
+
+  <h2>Palette</h2>
+  <ul class="swatches">
+    <li><span class="chip" style="background:#086DD6"></span><b>Accent</b>#086DD6</li>
+    <li><span class="chip" style="background:#0f1011"></span><b>Background</b>#0f1011</li>
+    <li><span class="chip" style="background:#1c1d1e"></span><b>Surface</b>#1c1d1e</li>
+    <li><span class="chip" style="background:#181a1b"></span><b>Border</b>#181a1b</li>
+    <li><span class="chip" style="background:#eeeeee"></span><b>Foreground</b>#eeeeee</li>
+  </ul>
+
+  <h2>Notes</h2>
+  <p>Custom fonts work on desktop and web. Standard Notes doesn't support them on mobile, so the mobile app gets the colours and falls back to the system font.</p>
+  <p>Inter carries no Arabic or CJK glyphs — those scripts fall through to the next family in the stack rather than rendering as boxes.</p>
+
+  <footer>
+    <a href="https://github.com/beshoysabri/sn-dark-blue-theme">Source on GitHub</a> · Theme MIT · <a href="https://rsms.me/inter/">Inter</a> by Rasmus Andersson, SIL OFL 1.1
+  </footer>
+
+</main>
+
+<script>
+// Keep the badge honest — read the version Pages is actually serving.
+fetch('ext.json')
+  .then(r => r.json())
+  .then(d => { document.getElementById('version').textContent = 'v' + d.version; })
+  .catch(() => {});
+
+const btn = document.getElementById('copy');
+btn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('url').textContent.trim());
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+  } catch {
+    btn.textContent = 'Select it';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+  }
+});
+</script>
+</body>
+</html>

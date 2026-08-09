@@ -3,10 +3,10 @@
   "name": "Dark Blue",
   "content_type": "SN|Theme",
   "area": "themes",
-  "version": "2.1.0",
-  "description": "Native Dark theme with a blue accent instead of purple.",
-  "url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/dist/dist.css",
-  "latest_url": "https://cdn.jsdelivr.net/gh/beshoysabri/sn-dark-blue-theme@master/ext.json",
+  "version": "2.2.0",
+  "description": "Native Dark theme with a blue accent instead of purple. Super notes are set in Inter.",
+  "url": "https://beshoysabri.github.io/sn-dark-blue-theme/dist/dist.css",
+  "latest_url": "https://beshoysabri.github.io/sn-dark-blue-theme/ext.json",
   "download_url": "https://github.com/beshoysabri/sn-dark-blue-theme/archive/master.zip",
   "dock_icon": {
     "type": "circle",
@@ -14,5 +14,6 @@
     "foreground_color": "#086DD6",
     "border_color": "#086DD6"
   },
-  "statusBar": "dark-content"
+  "statusBar": "dark-content",
+  "marketing_url": "https://beshoysabri.github.io/sn-dark-blue-theme"
 }

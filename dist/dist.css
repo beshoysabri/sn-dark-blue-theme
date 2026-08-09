@@ -1,3 +1,63 @@
+/*
+ * Standard Notes Theme: Dark Blue
+ * Native Dark palette with a blue accent instead of purple,
+ * plus Inter for the text inside Super notes.
+ *
+ * Author : Beshoy Sabri
+ * License: MIT  (Inter is OFL 1.1 — see LICENSE-3RD-PARTY)
+ * Version: 2.2.0
+ *
+ * Structure:
+ *   1. Typography — Inter webfont + knobs          (new in 2.2.0)
+ *   2. Colours    — byte-identical to v2.1.0
+ *   3. Super editor scoping                        (new in 2.2.0)
+ */
+
+/* ==============================================================
+ * 1. TYPOGRAPHY
+ * Inter v4.1 by Rasmus Andersson, SIL Open Font License 1.1.
+ * Bundled rather than @import-ed from Google Fonts so the theme
+ * resolves over jsDelivr and keeps working offline.
+ * ============================================================== */
+
+@font-face {
+  font-family: 'InterVariable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/InterVariable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'InterVariable';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/InterVariable-Italic.woff2') format('woff2');
+}
+
+:root {
+  /* Inter carries no Arabic or CJK glyphs, so those scripts fall
+     through to the next family instead of rendering as boxes. */
+  --sn-inter-font:
+    'InterVariable', 'Inter',
+    'Noto Naskh Arabic', 'Segoe UI', 'Noto Sans Arabic',
+    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+
+  --sn-inter-mono: var(
+    --sn-stylekit-monospace-font,
+    ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, monospace
+  );
+
+  /* cv05 gives lowercase l a tail so it stops reading as capital I.
+     Set to `normal` to switch the lot off. */
+  --sn-inter-features: 'cv05' 1, 'calt' 1, 'liga' 1;
+}
+
+/* ==============================================================
+ * 2. COLOURS — unchanged from v2.1.0
+ * ============================================================== */
+
 :root {
   /* Accent — blue instead of purple (#a464c2 → #086DD6) */
   --sn-stylekit-info-color: #086DD6;
@@ -132,3 +192,76 @@
   --popover-border-color: #28292b;
   --separator-color: #28292b;
 }
+
+/* ==============================================================
+ * 3. SUPER EDITOR SCOPING
+ * Super is the only Lexical surface in Standard Notes, so
+ * [data-lexical-editor] is the reliable hook. The ids and class
+ * name ride along in case the app renames one. Plaintext, Markdown
+ * and code editors are deliberately left on the system font.
+ * ============================================================== */
+
+#blocks-editor,
+#super-editor,
+.ContentEditable__root,
+[data-lexical-editor='true'] {
+  font-family: var(--sn-inter-font) !important;
+  font-feature-settings: var(--sn-inter-features);
+  font-optical-sizing: auto;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings, lists, tables, quotes and links carry their own
+   font-family from the app stylesheet — pull every descendant back
+   to the parent. Specificity (1,0,0); the code rule below lands at
+   (1,1,0) and wins. */
+:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true']) * {
+  font-family: inherit !important;
+}
+
+/* Code stays monospace. Covers real <pre>/<code> as well as
+   Lexical's span-based code nodes; highlight tokens nested inside
+   inherit from here. */
+:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true'])
+  :is(pre, code, kbd, samp, [class*='code' i]) {
+  font-family: var(--sn-inter-mono) !important;
+  font-feature-settings: normal;
+}
+
+/* ==============================================================
+ * 4. OPTIONAL — uncomment what you want
+ * ============================================================== */
+
+/* Match the note title to the body.
+#note-title-editor,
+.editor-title-bar input[type='text'] {
+  font-family: var(--sn-inter-font) !important;
+}
+*/
+
+/* Inter runs a touch wide at heading sizes; tighten the tracking.
+:is(#blocks-editor, [data-lexical-editor='true']) :is(h1, h2, h3, h4, h5, h6) {
+  letter-spacing: -0.018em;
+}
+*/
+
+/* Roomier leading in Super.
+#blocks-editor,
+[data-lexical-editor='true'] {
+  line-height: 1.65;
+}
+*/
+
+/* Lining, equal-width figures inside Super tables.
+:is(#blocks-editor, [data-lexical-editor='true']) table {
+  font-feature-settings: 'tnum' 1, 'cv05' 1;
+}
+*/
+
+/* Inter everywhere, not just Super — replaces section 3 entirely.
+:root {
+  --sn-stylekit-sans-serif-font: var(--sn-inter-font);
+  --sn-stylekit-editor-font-family: var(--sn-inter-font);
+}
+*/

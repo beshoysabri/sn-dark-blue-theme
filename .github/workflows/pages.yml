@@ -1,0 +1,66 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it — a half-published
+# theme is worse than a slightly stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify the theme is internally consistent
+        run: |
+          set -euo pipefail
+
+          EXT=$(python3 -c "import json;print(json.load(open('ext.json'))['version'])")
+          PKG=$(python3 -c "import json;print(json.load(open('package.json'))['version'])")
+          if [ "$EXT" != "$PKG" ]; then
+            echo "::error::version drift — ext.json=$EXT package.json=$PKG"
+            exit 1
+          fi
+
+          test -f dist/fonts/InterVariable.woff2        || { echo "::error::missing roman woff2"; exit 1; }
+          test -f dist/fonts/InterVariable-Italic.woff2 || { echo "::error::missing italic woff2"; exit 1; }
+
+          # The font URLs are relative to dist/dist.css — keep them that way,
+          # or the CDN/Pages copy will 404.
+          grep -q "url('fonts/InterVariable.woff2')" dist/dist.css \
+            || { echo "::error::roman @font-face src is not relative"; exit 1; }
+
+          python3 - <<'PY'
+          import re, sys
+          css = open('dist/dist.css').read()
+          # The colour block must survive untouched: spot-check the accent.
+          assert '--sn-stylekit-info-color: #086DD6;' in css, 'accent colour missing'
+          # Braces balanced (cheap guard against a bad merge).
+          assert css.count('{') == css.count('}'), 'unbalanced braces in dist.css'
+          print('dist.css looks sane')
+          PY
+
+          echo "ok — publishing v$EXT"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
