@@ -6,7 +6,7 @@
  * Author : Beshoy Sabri
  * License: MIT. Inter is OFL 1.1 — see
  *   https://beshoysabri.github.io/sn-dark-blue-theme/LICENSE-3RD-PARTY
- * Version: 2.4.0
+ * Version: 2.4.1
  *
  * FONTS — READ THIS. The desktop client sets
  *   Content-Security-Policy: default-src 'self' blob:
@@ -270,7 +270,7 @@ code *,
 /* ==============================================================
  * 4. DAILY VIEW — blue instead of danger red
  * The Daily notebook borrows Standard Notes' `danger` token for
- * today's date, the selected day, the entry tiles and the
+ * today's date, days that have an entry, the entry tiles and the
  * create-note buttons, so they come out #f80324 against an
  * otherwise blue theme.
  *
@@ -293,18 +293,21 @@ button.z-editor-title-bar.bg-danger {
   color: var(--sn-stylekit-info-contrast-color) !important;
 }
 
-/* Calendar: the selected day. */
+/* Calendar: TODAY — a solid fill, as the red version was. */
 .bg-danger.text-danger-contrast.font-bold.h-full.w-full {
   background-color: var(--sn-stylekit-info-color) !important;
   color: var(--sn-stylekit-info-contrast-color) !important;
 }
 
-/* Calendar: today, when it is not the selected day — a soft wash
-   rather than a solid fill, matching how the red version reads. */
+/* Calendar: A DAY THAT HAS AN ENTRY. Subordinate to today, but it
+   still has to read as a marker — the backdrop token alone is 6%
+   alpha and all but vanishes on this background, which would lose
+   the affordance entirely. The ring is a box-shadow, not a border:
+   the element ships no border-width, so border-color is inert. */
 .bg-danger-light.text-danger.font-bold.h-full.w-full {
   background-color: var(--sn-stylekit-info-backdrop-color) !important;
   color: var(--sn-stylekit-info-color) !important;
-  border-color: var(--sn-stylekit-info-color) !important;
+  box-shadow: inset 0 0 0 1.5px var(--sn-stylekit-info-color);
 }
 
 /* The date tile on each row of the Daily list. */

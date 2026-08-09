@@ -41,6 +41,11 @@ echo "    v$EXT, fonts present, absolute srcs, accent intact"
 
 say "Committing"
 test -f "$MSG_FILE" || { echo "no $MSG_FILE — write this release's notes first"; exit 1; }
+# Existence alone is not enough: once RELEASE_NOTES.md is tracked it always
+# exists, carrying the PREVIOUS release's prose — which is exactly how v2.3.0
+# shipped describing v2.2.0. Require it to name the version being published.
+grep -q "$VERSION" "$MSG_FILE" \
+  || { echo "$MSG_FILE never mentions $VERSION — stale notes from the last release?"; exit 1; }
 git add -A
 if git diff --cached --quiet; then
   echo "    nothing staged — reusing $(git rev-parse --short HEAD)"
