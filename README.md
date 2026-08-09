@@ -25,20 +25,24 @@ There's a preview and a copy button at **[beshoysabri.github.io/sn-dark-blue-the
 | Client | Colours | Inter |
 |---|---|---|
 | Web | yes | yes, downloaded automatically |
-| Desktop | yes | only with Inter installed on the machine — see below |
-| Mobile | yes | no — Standard Notes doesn't support custom fonts on mobile |
+| Desktop | yes | install Inter on the machine — see below |
+| Mobile | yes | install Inter on the device — works on iOS and Android |
 
-### Desktop needs Inter installed locally
+### Everywhere except the web app, install Inter on the device
 
-The desktop app sends `Content-Security-Policy: default-src 'self' blob:` with no `font-src`, so it refuses to download **any** webfont — from this repo, from a CDN, or inlined as a `data:` URI. No theme can ship a font file into it. Verified against the app, not assumed.
+The desktop app sends `Content-Security-Policy: default-src 'self' blob:` with no `font-src`, so it refuses to download **any** webfont — from this repo, from a CDN, or inlined as a `data:` URI. No theme can ship a font file into it. Verified against the running app, not assumed.
 
-What does work is a font already on your machine: no download, so CSP has nothing to block. The stack is written so an installed copy is found automatically.
+What does work is a font already installed on the device. There's no download, so CSP has nothing to block — it's just a family-name lookup, and the stack is written so an installed copy is found automatically. The same trick works on mobile.
+
+**Desktop**
 
 1. Download Inter from [rsms.me/inter](https://rsms.me/inter/)
-2. Install `InterVariable.ttf` (inside `Desktop/` in the zip) — Font Book on macOS, right-click → Install on Windows
+2. Install **both** `InterVariable.ttf` and `InterVariable-Italic.ttf` (inside `Desktop/` in the zip) — Font Book on macOS, right-click → Install on Windows. Skipping the italic leaves italics synthesised by slanting the roman rather than using Inter's real italic shapes.
 3. Fully quit Standard Notes and reopen it; the system font list is read at launch
 
-Skip this and the theme still works — you get the colours, and the text stays on the system font.
+**Mobile** — install Inter as a system font (iOS needs a font-installer app that adds a configuration profile; Android varies by manufacturer), then restart Standard Notes. Confirmed working on both iOS and Android.
+
+Skip this and the theme still works — you get the colours, and the text stays on the system font. That's a correct fallback, not a failure.
 
 <details>
 <summary>Alternative: jsDelivr</summary>
@@ -55,7 +59,9 @@ Both origins serve the same files. GitHub Pages is the default because branch-pi
 
 ## Hosting
 
-Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all 51 `--sn-stylekit-*` colour declarations still hash to the v2.1.0 digest, that the section 4 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
+Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all **90** colour declarations still hash to the v2.1.0 digest, that some rule actually applies `--sn-inter-font`, that the section 5 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
+
+The digest originally covered only the 51 `--sn-stylekit-*` names, which left 39 real colours — navigation, items column, editor, titlebar, text selection, popover — unguarded. It now covers every custom property except the three `--sn-inter-*` typography knobs.
 
 Enable it once under **Settings → Pages → Source → GitHub Actions**.
 
@@ -94,6 +100,14 @@ Three variables at the top of `dist/dist.css` control it:
 | `--sn-inter-features` | OpenType features. `cv05` gives lowercase `l` a tail so it stops looking like a capital `I`. Set to `normal` to disable. |
 
 Inter's contextual alternates fuse `->` into a single `→` glyph. If the caret feels off by one when you arrow across it, section 4 has a block that turns ligatures back off — along with tighter heading tracking, roomier leading, tabular figures in tables, and a block that confines Inter to the editor again the way v2.2.0 did.
+
+## Daily View
+
+Standard Notes' Daily notebook borrows the app's `danger` token for today's date, the selected day, the entry tiles and both create-note buttons — so on a blue theme they came out red. Since v2.4.0, section 4 of the stylesheet repaints those specific elements with the accent instead.
+
+It's scoped deliberately rather than recolouring `--sn-stylekit-danger-color` wholesale, for two reasons: destructive controls should stay red, and the rules only *reference* the accent variables rather than declaring new ones — so the colour digest is unaffected and the byte-identical guarantee holds.
+
+Because they reference `--sn-stylekit-info-color` and friends, retuning the accent moves the Daily view with it automatically.
 
 ## What Changed vs Native Dark
 

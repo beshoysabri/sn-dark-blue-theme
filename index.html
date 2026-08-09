@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dark Blue — a Standard Notes theme</title>
-<meta name="description" content="Native Dark palette with a blue accent instead of purple, and Super notes set in Inter.">
+<meta name="description" content="Native Dark palette with a blue accent instead of purple, and the whole app set in Inter.">
 <meta name="color-scheme" content="dark">
 
 <style>
@@ -195,8 +195,8 @@ footer {
 <main>
 
   <h1>Dark Blue</h1>
-  <p class="tagline">The native Standard Notes Dark palette, with the purple accent swapped for blue — and Super notes set in Inter.</p>
-  <p class="version" id="version">v2.2.0</p>
+  <p class="tagline">The native Standard Notes Dark palette, with the purple accent swapped for blue — and the whole app set in Inter.</p>
+  <p class="version" id="version">v2.4.0</p>
 
   <h2>Install</h2>
   <div class="install">
@@ -209,17 +209,17 @@ footer {
     <li>Pick <strong>Dark Blue</strong> from the Appearance menu</li>
   </ol>
 
-  <h2>Super notes, in Inter</h2>
+  <h2>The whole app, in Inter</h2>
   <div class="note">
     <div class="note-bar"><span class="dot"></span> Super</div>
     <div class="note-body">
       <h3>What actually changed</h3>
-      <p>Every background, border and shadow is identical to the built-in Dark theme. The accent moves from purple to blue, and the text inside Super notes is set in Inter — <em>italics included</em>, since the variable font ships in both styles.</p>
-      <blockquote>Scoping is deliberate: Super is the only Lexical surface in the app, so plaintext and Markdown editors keep the system font.</blockquote>
-      <p>Code keeps its monospace face, because the code rule outranks the body rule on specificity:</p>
-      <pre>:is(#blocks-editor, [data-lexical-editor='true'])
-  :is(pre, code, kbd, samp, [class*='code' i])</pre>
-      <p>If this paragraph renders in Inter, the webfont resolved correctly over Pages — which is the same path the theme uses.</p>
+      <p>Every background, border and shadow is identical to the built-in Dark theme. The accent moves from purple to blue, and the app is set in Inter — <em>italics included</em>, since the variable font ships in both styles.</p>
+      <blockquote>Since v2.3.0 this covers the sidebar, note list and menus too, not just Super notes. v2.2.0 scoped it to the editor alone.</blockquote>
+      <p>Code keeps its monospace face. That rule is listed after the app-wide one, so it wins at equal specificity:</p>
+      <pre>pre, code, kbd, samp, pre *, code *,
+[class*='code-' i], [data-lexical-code]</pre>
+      <p>If this paragraph renders in Inter, the woff2 files resolved over Pages. This page loads them by relative path because a browser fetches it directly; the theme names the same files by absolute URL, because Standard Notes inlines theme CSS and a relative path would resolve against the app's own origin.</p>
     </div>
   </div>
 
@@ -233,7 +233,8 @@ footer {
   </ul>
 
   <h2>Notes</h2>
-  <p>Custom fonts work on desktop and web. Standard Notes doesn't support them on mobile, so the mobile app gets the colours and falls back to the system font.</p>
+  <p><strong>Desktop and mobile need Inter installed on the device.</strong> The desktop app sets <code>default-src 'self' blob:</code> with no <code>font-src</code>, so it refuses to download any webfont — a <code>data:</code> URI included. A font already installed needs no download, so it just works: get <a href="https://rsms.me/inter/">Inter</a>, install it, restart the app. Confirmed on macOS, iOS and Android. Without it you still get the colours, with the system font.</p>
+  <p>The Daily notebook uses the app's <em>danger</em> token for today's date and the create-note button, which reads red on a blue theme. Since v2.4.0 those specific elements are repainted with the accent — destructive controls stay red.</p>
   <p>Inter carries no Arabic or CJK glyphs — those scripts fall through to the next family in the stack rather than rendering as boxes.</p>
 
   <footer>

@@ -58,17 +58,33 @@ jobs:
               if f"url('{BASE}/{face}')" not in stripped:
                   fail(f'@font-face src for {face} is not the absolute Pages URL')
 
-          # The colour block must stay byte-identical to v2.1.0. Spot-checking
-          # a single variable let the other 50 drift unnoticed, so digest all.
-          decls = re.findall(r'(--sn-stylekit-[\w-]+)\s*:\s*([^;]+);', stripped)
-          if len(decls) != 51:
-              fail(f'expected 51 --sn-stylekit declarations, found {len(decls)}')
+          # Every colour must stay byte-identical to v2.1.0. Digesting only the
+          # --sn-stylekit-* names covered 51 of 93 custom properties and left 39
+          # real colours unguarded — navigation, items column, editor, titlebar,
+          # text selection, popover. The 3 --sn-inter-* typography knobs are the
+          # only custom properties deliberately excluded.
+          decls = [(k, ' '.join(v.split()))
+                   for k, v in re.findall(r'(--[\w-]+)\s*:\s*([^;]+);', stripped)
+                   if not k.startswith('--sn-inter-')]
+          if len(decls) != 90:
+              fail(f'expected 90 colour declarations, found {len(decls)}')
           digest = hashlib.sha256('\n'.join(f'{k}={v}' for k, v in decls).encode()).hexdigest()
-          EXPECTED = 'd07a03c02353ff6311f74d0d76e61f0203f686336abbf2e39cb82071beb15ccc'
+          EXPECTED = '3fd01e1638f238f3cf37cc490e95b826f567d9c7698a3139da9a3bfc13298008'
           if digest != EXPECTED:
-              fail(f'colour block changed — digest {digest} != expected {EXPECTED}')
+              fail(f'colours changed — digest {digest} != expected {EXPECTED}')
 
-          # The section 4 opt-ins must stay commented out.
+          # A font that is declared but never applied is the v2.2.0 bug wearing
+          # a different hat: CI stayed green while nothing actually rendered.
+          if 'font-family: var(--sn-inter-font) !important' not in stripped:
+              fail('nothing applies --sn-inter-font — the app-wide rule is gone')
+          if not re.search(r'html\s*,\s*body\s*,\s*body\s*\*', stripped):
+              fail('the app-wide selector (html, body, body *) is missing')
+
+          # Note: the Daily view recolour must reference the accent rather than
+          # redeclaring danger. No separate check is needed — a redeclaration
+          # would push the count to 91 and break the digest above.
+
+          # The section 5 opt-ins must stay commented out.
           if 'font-family: revert' in stripped:
               fail('the "confine Inter to the editor" opt-in block is uncommented')
 
@@ -78,7 +94,7 @@ jobs:
           if stripped.count('{') != stripped.count('}'):
               fail('unbalanced braces in dist.css')
 
-          print('dist.css ok — 51 colours unchanged, absolute font srcs, braces balanced')
+          print(f'dist.css ok — {len(decls)} colours unchanged, Inter applied, absolute srcs, braces balanced')
           PY
 
           echo "ok — publishing v$EXT"

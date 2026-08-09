@@ -4,23 +4,31 @@
  * plus Inter across the whole app.
  *
  * Author : Beshoy Sabri
- * License: MIT  (Inter is OFL 1.1 — see LICENSE-3RD-PARTY)
- * Version: 2.3.0
+ * License: MIT. Inter is OFL 1.1 — see
+ *   https://beshoysabri.github.io/sn-dark-blue-theme/LICENSE-3RD-PARTY
+ * Version: 2.4.0
  *
- * DESKTOP APP — READ THIS. The desktop client sets
+ * FONTS — READ THIS. The desktop client sets
  *   Content-Security-Policy: default-src 'self' blob:
  * with no font-src, so it refuses every remote and data: webfont.
- * The @font-face below therefore only resolves in the web app. On
- * desktop the stack falls through to a locally installed copy of
- * Inter: install it from https://rsms.me/inter/ and relaunch the
- * app. Without it you get the colours and the system font, which
- * is a correct fallback rather than a failure. Mobile does not
- * support custom fonts at all.
+ * The @font-face below therefore only downloads in the web app.
+ * Everywhere else the stack falls through to a copy of Inter
+ * installed on the device, which needs no download and so has
+ * nothing to block:
+ *
+ *   Web      — downloads automatically, nothing to do
+ *   Desktop  — install Inter (https://rsms.me/inter/), then relaunch
+ *   Mobile   — install Inter on the device; confirmed working on
+ *              both iOS and Android
+ *
+ * Without a local copy you get the colours and the system font,
+ * which is a correct fallback rather than a failure.
  *
  * Structure:
  *   1. Typography — Inter webfont + knobs
  *   2. Colours    — byte-identical to v2.1.0
  *   3. Apply Inter app-wide                        (changed in 2.3.0)
+ *   4. Daily view — blue instead of danger red     (new in 2.4.0)
  */
 
 /* ==============================================================
@@ -43,6 +51,7 @@
   font-display: swap;
   src:
     local('InterVariable'),
+    local('Inter Variable'),
     url('https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts/InterVariable.woff2')
       format('woff2');
 }
@@ -53,7 +62,8 @@
   font-weight: 100 900;
   font-display: swap;
   src:
-    local('InterVariable Italic'),
+    local('InterVariableItalic'),
+    local('Inter Variable Italic'),
     url('https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts/InterVariable-Italic.woff2')
       format('woff2');
 }
@@ -61,8 +71,12 @@
 :root {
   /* Inter carries no Arabic or CJK glyphs, so those scripts fall
      through to the next family instead of rendering as boxes. */
+  /* 'InterVariable' is the @font-face above. 'Inter Variable' is the family
+     name a locally installed InterVariable.ttf actually registers under, and
+     'Inter' catches a static install — both matter because the webfont cannot
+     load in the desktop or mobile clients. */
   --sn-inter-font:
-    'InterVariable', 'Inter',
+    'InterVariable', 'Inter Variable', 'Inter',
     'Noto Naskh Arabic', 'Segoe UI', 'Noto Sans Arabic',
     -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
 
@@ -254,7 +268,58 @@ code *,
 }
 
 /* ==============================================================
- * 4. OPTIONAL — uncomment what you want
+ * 4. DAILY VIEW — blue instead of danger red
+ * The Daily notebook borrows Standard Notes' `danger` token for
+ * today's date, the selected day, the entry tiles and the
+ * create-note buttons, so they come out #f80324 against an
+ * otherwise blue theme.
+ *
+ * These rules repaint only those elements, and only by REFERENCING
+ * the accent variables the palette already defines — no
+ * --sn-stylekit-* declaration is added, so the colour block stays
+ * byte-identical to v2.1.0. Genuinely destructive UI keeps its red,
+ * which is the whole reason this is scoped rather than a recolour
+ * of --sn-stylekit-danger-color.
+ *
+ * These match Standard Notes' internal utility classes and may
+ * need revisiting if the app restyles the Daily view.
+ * ============================================================== */
+
+/* Both create-note buttons: the round + pinned bottom-right and
+   its twin in the title bar. z-editor-title-bar is the class that
+   separates them from anything actually destructive. */
+button.z-editor-title-bar.bg-danger {
+  background-color: var(--sn-stylekit-info-color) !important;
+  color: var(--sn-stylekit-info-contrast-color) !important;
+}
+
+/* Calendar: the selected day. */
+.bg-danger.text-danger-contrast.font-bold.h-full.w-full {
+  background-color: var(--sn-stylekit-info-color) !important;
+  color: var(--sn-stylekit-info-contrast-color) !important;
+}
+
+/* Calendar: today, when it is not the selected day — a soft wash
+   rather than a solid fill, matching how the red version reads. */
+.bg-danger-light.text-danger.font-bold.h-full.w-full {
+  background-color: var(--sn-stylekit-info-backdrop-color) !important;
+  color: var(--sn-stylekit-info-color) !important;
+  border-color: var(--sn-stylekit-info-color) !important;
+}
+
+/* The date tile on each row of the Daily list. */
+.bg-danger.h-19.w-18 {
+  background-color: var(--sn-stylekit-info-color) !important;
+  color: var(--sn-stylekit-info-contrast-color) !important;
+}
+
+/* Left edge of the selected row in the note list. */
+.content-list-item.border-danger {
+  border-color: var(--sn-stylekit-info-color) !important;
+}
+
+/* ==============================================================
+ * 5. OPTIONAL — uncomment what you want
  * ============================================================== */
 
 /* Inter runs a touch wide at heading sizes; tighten the tracking.
