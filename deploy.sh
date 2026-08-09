@@ -9,7 +9,7 @@ set -euo pipefail
 
 REPO_SLUG="beshoysabri/sn-dark-blue-theme"
 BRANCH="master"       # this repo's default branch is master, not main
-VERSION="2.2.0"
+VERSION="2.3.0"
 PAGES="https://beshoysabri.github.io/sn-dark-blue-theme"
 
 say() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
@@ -21,10 +21,12 @@ PKG=$(python3 -c "import json;print(json.load(open('package.json'))['version'])"
 [ "$EXT" = "$VERSION" ] || { echo "expected v$VERSION, manifests say v$EXT"; exit 1; }
 test -f dist/fonts/InterVariable.woff2
 test -f dist/fonts/InterVariable-Italic.woff2
-grep -q "url('fonts/InterVariable.woff2')" dist/dist.css
+PAGES_FONTS="https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts"
+grep -q "url('${PAGES_FONTS}/InterVariable.woff2')" dist/dist.css
+grep -q "url('${PAGES_FONTS}/InterVariable-Italic.woff2')" dist/dist.css
 grep -q -- "--sn-stylekit-info-color: #086DD6;" dist/dist.css
 test -f .nojekyll
-echo "    v$EXT, fonts present, relative srcs, accent intact"
+echo "    v$EXT, fonts present, absolute srcs, accent intact"
 
 say "Committing"
 git add -A

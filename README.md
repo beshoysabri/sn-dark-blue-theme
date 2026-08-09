@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Standard Notes](https://img.shields.io/badge/Standard%20Notes-Theme-6366f1.svg)](https://standardnotes.com)
 
-A clean, dark theme for [Standard Notes](https://standardnotes.com) that replaces the default purple accent with a sharp blue, and sets Super notes in [Inter](https://rsms.me/inter/).
+A clean, dark theme for [Standard Notes](https://standardnotes.com) that replaces the default purple accent with a sharp blue, and sets the app in [Inter](https://rsms.me/inter/).
 
 Built on the **exact same color foundation** as the native Dark theme — same deep blacks, same contrast ratios, same UI feel. Every purple accent (`#a464c2`) is swapped to blue (`#086DD6`), and nothing else about the palette moves.
 
@@ -22,7 +22,23 @@ https://beshoysabri.github.io/sn-dark-blue-theme/ext.json
 
 There's a preview and a copy button at **[beshoysabri.github.io/sn-dark-blue-theme](https://beshoysabri.github.io/sn-dark-blue-theme)**.
 
-Colors work on Desktop, Web, and Mobile. The Inter typography is Desktop and Web only — Standard Notes doesn't support custom fonts on mobile.
+| Client | Colours | Inter |
+|---|---|---|
+| Web | yes | yes, downloaded automatically |
+| Desktop | yes | only with Inter installed on the machine — see below |
+| Mobile | yes | no — Standard Notes doesn't support custom fonts on mobile |
+
+### Desktop needs Inter installed locally
+
+The desktop app sends `Content-Security-Policy: default-src 'self' blob:` with no `font-src`, so it refuses to download **any** webfont — from this repo, from a CDN, or inlined as a `data:` URI. No theme can ship a font file into it. Verified against the app, not assumed.
+
+What does work is a font already on your machine: no download, so CSP has nothing to block. The stack is written so an installed copy is found automatically.
+
+1. Download Inter from [rsms.me/inter](https://rsms.me/inter/)
+2. Install `InterVariable.ttf` (inside `Desktop/` in the zip) — Font Book on macOS, right-click → Install on Windows
+3. Fully quit Standard Notes and reopen it; the system font list is read at launch
+
+Skip this and the theme still works — you get the colours, and the text stays on the system font.
 
 <details>
 <summary>Alternative: jsDelivr</summary>
@@ -39,7 +55,7 @@ Both origins serve the same files. GitHub Pages is the default because branch-pi
 
 ## Hosting
 
-Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that the `@font-face` sources are still relative, that the accent color is intact, and that braces balance in `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
+Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all 51 `--sn-stylekit-*` colour declarations still hash to the v2.1.0 digest, that the section 4 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
 
 Enable it once under **Settings → Pages → Source → GitHub Actions**.
 
@@ -58,16 +74,16 @@ Enable it once under **Settings → Pages → Source → GitHub Actions**.
 
 ## Typography
 
-Since v2.2.0, the text inside **Super** notes is set in Inter v4.1 — the variable font, roman and italic, bundled in `dist/fonts/` under the SIL Open Font License. It ships with the theme rather than loading from Google Fonts, so it resolves over jsDelivr and keeps working offline.
+Since v2.3.0 the whole app is set in Inter v4.1 — sidebar, note list, menus and note text. The variable font, roman and italic, is bundled in `dist/fonts/` under the SIL Open Font License.
 
-Scoping is deliberate. Super is the only [Lexical](https://lexical.dev) surface in the app, so `[data-lexical-editor='true']` is the hook, with `#blocks-editor`, `#super-editor` and `.ContentEditable__root` alongside it in case the app renames one. Plaintext, Markdown and code editors stay on the system font. Inside Super, code blocks and inline code keep their monospace face:
+v2.2.0 scoped Inter to Super notes only. That left the rest of the UI on the system font, and — because of the CSP above — never actually loaded on Desktop at all.
 
-| Rule | Selector shape | Specificity |
-|---|---|---|
-| Body | `:is(<roots>) *` | (1,0,0) |
-| Code | `:is(<roots>) :is(pre, code, kbd, samp, [class*='code' i])` | (1,1,0) |
+Two details make it work where v2.2.0 didn't:
 
-The code rule outranks the body rule, so syntax-highlight tokens nested inside a code block inherit monospace correctly.
+- **The `@font-face` sources are absolute, not relative.** Standard Notes inlines theme CSS instead of linking it, so a relative `url('fonts/…')` resolves against the app's own origin and 404s. v2.2.0 shipped that bug; the fonts never loaded in any client.
+- **The family is set on elements, not through a variable.** Standard Notes doesn't read `--sn-stylekit-sans-serif-font` for its own chrome, so setting that variable changes nothing. `html, body, body *` is what actually reaches the UI.
+
+Code keeps a monospace face. That rule is listed after the app-wide one so it wins at equal specificity, and it disables contextual alternates so `->` stays two characters where that matters.
 
 Three variables at the top of `dist/dist.css` control it:
 
@@ -77,13 +93,11 @@ Three variables at the top of `dist/dist.css` control it:
 | `--sn-inter-mono` | Code face. Defaults to whatever Standard Notes already uses. |
 | `--sn-inter-features` | OpenType features. `cv05` gives lowercase `l` a tail so it stops looking like a capital `I`. Set to `normal` to disable. |
 
-Section 4 of the stylesheet has commented-out extras: matching the note title, tighter heading tracking, roomier leading, tabular figures in tables, and a one-liner that applies Inter across the whole app instead of just Super.
-
-**Platform note:** custom fonts work on Desktop and Web. Standard Notes does not support custom fonts on mobile, so the mobile app renders the colors only and falls back to the system font.
+Inter's contextual alternates fuse `->` into a single `→` glyph. If the caret feels off by one when you arrow across it, section 4 has a block that turns ligatures back off — along with tighter heading tracking, roomier leading, tabular figures in tables, and a block that confines Inter to the editor again the way v2.2.0 did.
 
 ## What Changed vs Native Dark
 
-The accent color, and the Super editor font. Every background, border, shadow, and text color is identical to the built-in Dark theme. The purple-to-blue swap applies to:
+The accent color, and the font. Every background, border, shadow, and text color is identical to the built-in Dark theme. The purple-to-blue swap applies to:
 
 - Selected items and navigation highlights
 - Links, buttons, and focus rings

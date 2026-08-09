@@ -39,19 +39,46 @@ jobs:
           test -f dist/fonts/InterVariable.woff2        || { echo "::error::missing roman woff2"; exit 1; }
           test -f dist/fonts/InterVariable-Italic.woff2 || { echo "::error::missing italic woff2"; exit 1; }
 
-          # The font URLs are relative to dist/dist.css — keep them that way,
-          # or the CDN/Pages copy will 404.
-          grep -q "url('fonts/InterVariable.woff2')" dist/dist.css \
-            || { echo "::error::roman @font-face src is not relative"; exit 1; }
-
           python3 - <<'PY'
-          import re, sys
+          import re, sys, hashlib
+
           css = open('dist/dist.css').read()
-          # The colour block must survive untouched: spot-check the accent.
-          assert '--sn-stylekit-info-color: #086DD6;' in css, 'accent colour missing'
-          # Braces balanced (cheap guard against a bad merge).
-          assert css.count('{') == css.count('}'), 'unbalanced braces in dist.css'
-          print('dist.css looks sane')
+          # Strip comments so the opt-in blocks in section 4 never count as live.
+          stripped = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
+
+          def fail(msg):
+              print(f'::error::{msg}')
+              sys.exit(1)
+
+          # Standard Notes inlines theme CSS rather than linking it, so a
+          # relative @font-face src resolves against the app's own origin and
+          # 404s. v2.2.0 shipped that bug. Both srcs must be absolute.
+          BASE = 'https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts'
+          for face in ('InterVariable.woff2', 'InterVariable-Italic.woff2'):
+              if f"url('{BASE}/{face}')" not in stripped:
+                  fail(f'@font-face src for {face} is not the absolute Pages URL')
+
+          # The colour block must stay byte-identical to v2.1.0. Spot-checking
+          # a single variable let the other 50 drift unnoticed, so digest all.
+          decls = re.findall(r'(--sn-stylekit-[\w-]+)\s*:\s*([^;]+);', stripped)
+          if len(decls) != 51:
+              fail(f'expected 51 --sn-stylekit declarations, found {len(decls)}')
+          digest = hashlib.sha256('\n'.join(f'{k}={v}' for k, v in decls).encode()).hexdigest()
+          EXPECTED = 'd07a03c02353ff6311f74d0d76e61f0203f686336abbf2e39cb82071beb15ccc'
+          if digest != EXPECTED:
+              fail(f'colour block changed — digest {digest} != expected {EXPECTED}')
+
+          # The section 4 opt-ins must stay commented out.
+          if 'font-family: revert' in stripped:
+              fail('the "confine Inter to the editor" opt-in block is uncommented')
+
+          # Count braces on the stripped source; counting the raw file also
+          # counts braces inside the commented-out blocks and hides a real
+          # imbalance behind them.
+          if stripped.count('{') != stripped.count('}'):
+              fail('unbalanced braces in dist.css')
+
+          print('dist.css ok — 51 colours unchanged, absolute font srcs, braces balanced')
           PY
 
           echo "ok — publishing v$EXT"

@@ -1,23 +1,39 @@
 /*
  * Standard Notes Theme: Dark Blue
  * Native Dark palette with a blue accent instead of purple,
- * plus Inter for the text inside Super notes.
+ * plus Inter across the whole app.
  *
  * Author : Beshoy Sabri
  * License: MIT  (Inter is OFL 1.1 — see LICENSE-3RD-PARTY)
- * Version: 2.2.0
+ * Version: 2.3.0
+ *
+ * DESKTOP APP — READ THIS. The desktop client sets
+ *   Content-Security-Policy: default-src 'self' blob:
+ * with no font-src, so it refuses every remote and data: webfont.
+ * The @font-face below therefore only resolves in the web app. On
+ * desktop the stack falls through to a locally installed copy of
+ * Inter: install it from https://rsms.me/inter/ and relaunch the
+ * app. Without it you get the colours and the system font, which
+ * is a correct fallback rather than a failure. Mobile does not
+ * support custom fonts at all.
  *
  * Structure:
- *   1. Typography — Inter webfont + knobs          (new in 2.2.0)
+ *   1. Typography — Inter webfont + knobs
  *   2. Colours    — byte-identical to v2.1.0
- *   3. Super editor scoping                        (new in 2.2.0)
+ *   3. Apply Inter app-wide                        (changed in 2.3.0)
  */
 
 /* ==============================================================
  * 1. TYPOGRAPHY
  * Inter v4.1 by Rasmus Andersson, SIL Open Font License 1.1.
  * Bundled rather than @import-ed from Google Fonts so the theme
- * resolves over jsDelivr and keeps working offline.
+ * keeps working offline.
+ *
+ * local() first: an installed copy costs no request and is the
+ * only thing that works in the desktop app. The URLs are absolute
+ * because Standard Notes inlines theme CSS rather than linking it,
+ * so a relative src would resolve against the app's own origin and
+ * 404. (v2.2.0 used relative srcs and the font never loaded.)
  * ============================================================== */
 
 @font-face {
@@ -25,7 +41,10 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('fonts/InterVariable.woff2') format('woff2');
+  src:
+    local('InterVariable'),
+    url('https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts/InterVariable.woff2')
+      format('woff2');
 }
 
 @font-face {
@@ -33,7 +52,10 @@
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url('fonts/InterVariable-Italic.woff2') format('woff2');
+  src:
+    local('InterVariable Italic'),
+    url('https://beshoysabri.github.io/sn-dark-blue-theme/dist/fonts/InterVariable-Italic.woff2')
+      format('woff2');
 }
 
 :root {
@@ -194,54 +216,49 @@
 }
 
 /* ==============================================================
- * 3. SUPER EDITOR SCOPING
- * Super is the only Lexical surface in Standard Notes, so
- * [data-lexical-editor] is the reliable hook. The ids and class
- * name ride along in case the app renames one. Plaintext, Markdown
- * and code editors are deliberately left on the system font.
+ * 3. APPLY INTER — app-wide
+ * Standard Notes does not read --sn-stylekit-sans-serif-font for
+ * its own chrome, so setting that variable does nothing; the
+ * family has to be set on the elements themselves. v2.2.0 scoped
+ * this to the Super editor only, which left the sidebar, note
+ * list and menus on the system font.
  * ============================================================== */
 
-#blocks-editor,
-#super-editor,
-.ContentEditable__root,
-[data-lexical-editor='true'] {
+html,
+body,
+body * {
   font-family: var(--sn-inter-font) !important;
   font-feature-settings: var(--sn-inter-features);
+  font-variant-ligatures: contextual common-ligatures;
   font-optical-sizing: auto;
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings, lists, tables, quotes and links carry their own
-   font-family from the app stylesheet — pull every descendant back
-   to the parent. Specificity (1,0,0); the code rule below lands at
-   (1,1,0) and wins. */
-:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true']) * {
-  font-family: inherit !important;
-}
-
-/* Code stays monospace. Covers real <pre>/<code> as well as
-   Lexical's span-based code nodes; highlight tokens nested inside
-   inherit from here. */
-:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true'])
-  :is(pre, code, kbd, samp, [class*='code' i]) {
+/* Code keeps a monospace face, and no contextual substitution, so
+   -> stays two characters where that actually matters. Listed
+   after the rule above so it wins at equal specificity.
+   v2.2.0 matched [class*='code' i], which also caught prose like
+   "Encoded"; requiring the hyphen keeps it to real class names. */
+pre,
+code,
+kbd,
+samp,
+pre *,
+code *,
+[class*='code-' i],
+[data-lexical-code] {
   font-family: var(--sn-inter-mono) !important;
   font-feature-settings: normal;
+  font-variant-ligatures: none;
 }
 
 /* ==============================================================
  * 4. OPTIONAL — uncomment what you want
  * ============================================================== */
 
-/* Match the note title to the body.
-#note-title-editor,
-.editor-title-bar input[type='text'] {
-  font-family: var(--sn-inter-font) !important;
-}
-*/
-
 /* Inter runs a touch wide at heading sizes; tighten the tracking.
-:is(#blocks-editor, [data-lexical-editor='true']) :is(h1, h2, h3, h4, h5, h6) {
+:is(h1, h2, h3, h4, h5, h6) {
   letter-spacing: -0.018em;
 }
 */
@@ -259,9 +276,24 @@
 }
 */
 
-/* Inter everywhere, not just Super — replaces section 3 entirely.
-:root {
-  --sn-stylekit-sans-serif-font: var(--sn-inter-font);
-  --sn-stylekit-editor-font-family: var(--sn-inter-font);
+/* Turn the -> arrow substitution back off. Inter's contextual
+   alternates fuse -> into a single glyph, which can make the caret
+   feel off by one when you arrow across it in an editor.
+html, body, body * {
+  font-variant-ligatures: none;
+}
+*/
+
+/* Confine Inter to the note editor again, as v2.2.0 did, leaving
+   the sidebar and menus on the system font — replaces section 3.
+html, body, body * {
+  font-family: revert !important;
+}
+#blocks-editor,
+#super-editor,
+.ContentEditable__root,
+[data-lexical-editor='true'],
+:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true']) * {
+  font-family: var(--sn-inter-font) !important;
 }
 */
