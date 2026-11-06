@@ -78,6 +78,10 @@ say "Verifying what Pages actually serves"
 BAD=0
 for path in ext.json dist/dist.css dist/fonts/InterVariable.woff2 dist/fonts/InterVariable-Italic.woff2; do
   read -r code ctype < <(curl -sS -o /dev/null -w '%{http_code} %{content_type}\n' "${PAGES}/${path}")
+  # Native Windows curl ends the write-out with \r\n and read keeps the \r,
+  # so a healthy font/woff2 failed the comparison below and the deploy
+  # reported broken assets on Windows.
+  ctype=${ctype%$'\r'}
   printf '    %-40s %s  %s\n' "$path" "$code" "$ctype"
   [ "$code" = "200" ] || BAD=1
   case "$path" in

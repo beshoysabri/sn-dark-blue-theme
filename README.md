@@ -9,8 +9,8 @@ Built on the **exact same color foundation** as the native Dark theme — same d
 
 ## Installation
 
-1. Open Standard Notes
-2. Go to **Preferences** > **General** > **Advanced Settings** > **Install Custom Plugin**
+1. Open the Standard Notes **desktop** app
+2. Go to **Preferences** > **Plugins** > **Install Custom Plugin** (at the bottom of the page — older versions had it under **General** > **Advanced Settings**)
 3. Paste the following URL:
 
 ```
@@ -21,6 +21,8 @@ https://beshoysabri.github.io/sn-dark-blue-theme/ext.json
 5. Select **Dark Blue** from the Appearance menu
 
 There's a preview and a copy button at **[beshoysabri.github.io/sn-dark-blue-theme](https://beshoysabri.github.io/sn-dark-blue-theme)**.
+
+**Install from the desktop app, not the web app.** The web app's Content-Security-Policy (`connect-src`) only lets it fetch from Standard Notes' own servers, `raw.githubusercontent.com` and `listed.to`, so pasting the link there gives *"Error downloading package details"* — for every self-hosted theme, this one included. A `raw.githubusercontent.com` link fails too, because Standard Notes sends the request with credentials and GitHub answers `Access-Control-Allow-Origin: *`. Installed themes sync with your account, though, and the web app loads the stylesheet and fonts from Pages without complaint, so once it's installed on the desktop it shows up on the web too. Verified against app.standardnotes.com v3.203.0.
 
 | Client | Colours | Inter |
 |---|---|---|

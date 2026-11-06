@@ -1,24 +1,25 @@
-fix(daily): restore the "day has an entry" marker, correct two comments
+fix: install from the desktop app, under Plugins; deploy.sh on Windows
 
-v2.4.0 repainted the Daily calendar's has-an-entry chip with
---sn-stylekit-info-backdrop-color, which is 6% alpha and all but vanishes
-against this theme's background. Standard Notes' own colour there is a
-clearly visible pale pill, so the affordance that tells you which days
-already hold a note was effectively erased. It now keeps the faint wash and
-gains a thin accent ring.
+The README and landing page sent people to Preferences → General →
+Advanced Settings → Install Custom Plugin. Current Standard Notes
+(v3.203.0) has it under Preferences → Plugins, at the bottom of the
+page. Both now give that path, and say where older versions kept it.
 
-The ring is a box-shadow rather than a border: the element ships no
-border-width, so the border-color v2.4.0 set on it never rendered.
+Both also say to install from the desktop app. The web app can't install
+any self-hosted theme from a link: its CSP connect-src allows only
+Standard Notes' own servers, raw.githubusercontent.com and listed.to, so
+the github.io link fails with "Error downloading package details". A
+raw.githubusercontent.com link fails too: Standard Notes sends the request
+with credentials, and GitHub answers Access-Control-Allow-Origin: *.
+Installed themes sync with the account, and the web app then loads the
+stylesheet and fonts from Pages without complaint (style-src *,
+font-src *) — verified against app.standardnotes.com v3.203.0.
 
-Two comments in section 4 also named the wrong elements — .bg-danger is
-today and .bg-danger-light is a day with an entry, not "the selected day"
-and "today when not selected". Corrected; the CSS itself was targeting the
-right elements throughout.
+deploy.sh: native Windows curl ends its -w write-out with \r\n, and read
+keeps the \r, so 'font/woff2\r' failed the content-type check. On Windows
+a healthy deploy reported broken assets and exited before the CORS check
+and the jsDelivr purge. The \r is now stripped.
 
-deploy.sh: testing that RELEASE_NOTES.md merely exists was not enough. Now
-that the file is tracked it always exists, carrying the previous release's
-prose — the same trap that made v2.3.0 ship with a message describing
-v2.2.0, one release later and with a guard giving false confidence. The
-check now requires the notes to name the version being published.
+No colour changes; the CI digest is untouched.
 
-Released as 2.4.1.
+Released as 2.4.2.
