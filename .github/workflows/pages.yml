@@ -80,6 +80,11 @@ jobs:
           if not re.search(r'html\s*,\s*body\s*,\s*body\s*\*', stripped):
               fail('the app-wide selector (html, body, body *) is missing')
 
+          # The app-wide rule must not swallow Standard Notes' Monospace
+          # option again — before 2.4.3 it did, and the option did nothing.
+          if ':root.monospace-font .font-editor' not in stripped:
+              fail('the rule that honours the Monospace option is gone')
+
           # Note: the Daily view recolour must reference the accent rather than
           # redeclaring danger. No separate check is needed — a redeclaration
           # would push the count to 91 and break the digest above.

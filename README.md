@@ -61,7 +61,7 @@ Both origins serve the same files. GitHub Pages is the default because branch-pi
 
 ## Hosting
 
-Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all **90** colour declarations still hash to the v2.1.0 digest, that some rule actually applies `--sn-inter-font`, that the section 5 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
+Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all **90** colour declarations still hash to the v2.1.0 digest, that some rule actually applies `--sn-inter-font`, that the rule honouring the Monospace Font option is still there, that the section 5 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
 
 The digest originally covered only the 51 `--sn-stylekit-*` names, which left 39 real colours — navigation, items column, editor, titlebar, text selection, popover — unguarded. It now covers every custom property except the three `--sn-inter-*` typography knobs.
 
@@ -93,6 +93,8 @@ Two details make it work where v2.2.0 didn't:
 
 Code keeps a monospace face. That rule is listed after the app-wide one so it wins at equal specificity, and it disables contextual alternates so `->` stays two characters where that matters.
 
+Standard Notes' **Monospace Font** option (Preferences → Appearance) switches the note editor to monospace. Until v2.4.3 the app-wide Inter rule overrode it and the switch did nothing; a rule after it now hands the editor back.
+
 Three variables at the top of `dist/dist.css` control it:
 
 | Variable | Purpose |
@@ -101,7 +103,7 @@ Three variables at the top of `dist/dist.css` control it:
 | `--sn-inter-mono` | Code face. Defaults to whatever Standard Notes already uses. |
 | `--sn-inter-features` | OpenType features. `cv05` gives lowercase `l` a tail so it stops looking like a capital `I`. Set to `normal` to disable. |
 
-Inter's contextual alternates fuse `->` into a single `→` glyph. If the caret feels off by one when you arrow across it, section 4 has a block that turns ligatures back off — along with tighter heading tracking, roomier leading, tabular figures in tables, and a block that confines Inter to the editor again the way v2.2.0 did.
+Inter's contextual alternates fuse `->` into a single `→` glyph. If the caret feels off by one when you arrow across it, section 5 has a block that turns the arrows off. Since v2.4.3 it takes `calt` out of `--sn-inter-features` too, because `font-feature-settings` outranks `font-variant-ligatures`; before, the block left the arrows in place. Section 5 also has tighter heading tracking, roomier leading, tabular figures in tables, and a block that confines Inter to the editor again the way v2.2.0 did.
 
 ## Daily View
 

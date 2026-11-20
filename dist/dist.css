@@ -6,7 +6,7 @@
  * Author : Beshoy Sabri
  * License: MIT. Inter is OFL 1.1 — see
  *   https://beshoysabri.github.io/sn-dark-blue-theme/LICENSE-3RD-PARTY
- * Version: 2.4.2
+ * Version: 2.4.3
  *
  * FONTS — READ THIS. The desktop client sets
  *   Content-Security-Policy: default-src 'self' blob:
@@ -267,6 +267,17 @@ code *,
   font-variant-ligatures: none;
 }
 
+/* Standard Notes' "Monospace font" option puts .monospace-font on
+   <html> and points .font-editor, the note editor, at the monospace
+   stack. The app-wide rule above set Inter with !important and won,
+   so until 2.4.3 the option did nothing. This hands the editor back. */
+:root.monospace-font .font-editor,
+:root.monospace-font .font-editor * {
+  font-family: var(--sn-inter-mono) !important;
+  font-feature-settings: normal;
+  font-variant-ligatures: none;
+}
+
 /* ==============================================================
  * 4. DAILY VIEW — blue instead of danger red
  * The Daily notebook borrows Standard Notes' `danger` token for
@@ -338,8 +349,11 @@ button.z-editor-title-bar.bg-danger {
 }
 */
 
-/* Lining, equal-width figures inside Super tables.
-:is(#blocks-editor, [data-lexical-editor='true']) table {
+/* Lining, equal-width figures inside Super tables. The app-wide
+   rule sets feature settings on every element, so this has to reach
+   the cells' contents, not just the table; before 2.4.3 it stopped at
+   the table and changed nothing.
+:is(#blocks-editor, [data-lexical-editor='true']) :is(table, table *) {
   font-feature-settings: 'tnum' 1, 'cv05' 1;
 }
 */
@@ -347,8 +361,14 @@ button.z-editor-title-bar.bg-danger {
 /* Turn the -> arrow substitution back off. Inter's contextual
    alternates fuse -> into a single glyph, which can make the caret
    feel off by one when you arrow across it in an editor.
+   font-feature-settings outranks font-variant-ligatures, so 'calt'
+   has to leave --sn-inter-features as well; before 2.4.3 this block
+   set only font-variant-ligatures and the arrows stayed.
+:root {
+  --sn-inter-features: 'cv05' 1;
+}
 html, body, body * {
-  font-variant-ligatures: none;
+  font-variant-ligatures: common-ligatures no-contextual;
 }
 */
 
