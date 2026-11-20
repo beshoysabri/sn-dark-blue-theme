@@ -1,6 +1,6 @@
 {
   "name": "sn-dark-blue-theme",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "main": "dist/dist.css",
   "sn": {
     "main": "dist/dist.css"

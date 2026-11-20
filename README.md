@@ -61,7 +61,7 @@ Both origins serve the same files. GitHub Pages is the default because branch-pi
 
 ## Hosting
 
-Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all **90** colour declarations still hash to the v2.1.0 digest, that some rule actually applies `--sn-inter-font`, that the rule honouring the Monospace Font option is still there, that the section 5 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
+Pushing to `master` triggers `.github/workflows/pages.yml`, which verifies the theme before publishing — that `ext.json` and `package.json` agree on a version, that both woff2 files exist, that both `@font-face` sources are the absolute Pages URLs, that all **90** colour declarations still hash to the v2.1.0 digest, that some rule actually applies `--sn-inter-font`, scoped so it never reaches into editor plugins, that the rule honouring the Monospace Font option is still there, that the section 5 opt-ins are still commented out, and that braces balance in the comment-stripped `dist.css`. A failed check blocks the deploy rather than shipping a broken stylesheet.
 
 The digest originally covered only the 51 `--sn-stylekit-*` names, which left 39 real colours — navigation, items column, editor, titlebar, text selection, popover — unguarded. It now covers every custom property except the three `--sn-inter-*` typography knobs.
 
@@ -89,7 +89,7 @@ v2.2.0 scoped Inter to Super notes only. That left the rest of the UI on the sys
 Two details make it work where v2.2.0 didn't:
 
 - **The `@font-face` sources are absolute, not relative.** Standard Notes inlines theme CSS instead of linking it, so a relative `url('fonts/…')` resolves against the app's own origin and 404s. v2.2.0 shipped that bug; the fonts never loaded in any client.
-- **The family is set on elements, not through a variable.** Standard Notes doesn't read `--sn-stylekit-sans-serif-font` for its own chrome, so setting that variable changes nothing. `html, body, body *` is what actually reaches the UI.
+- **The family is set on elements, not through a variable.** Standard Notes doesn't read `--sn-stylekit-sans-serif-font` for its own chrome, so setting that variable changes nothing. A rule on every element is what actually reaches the UI. Since v2.4.4 it is scoped to Standard Notes' own page, `:where(body:has(> #app-group-root))`: SN also loads the theme into every editor plugin's frame, and the unscoped `body *` rule replaced the plugins' own fonts with Inter.
 
 Code keeps a monospace face. That rule is listed after the app-wide one so it wins at equal specificity, and it disables contextual alternates so `->` stays two characters where that matters.
 

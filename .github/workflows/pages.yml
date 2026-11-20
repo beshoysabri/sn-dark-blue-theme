@@ -77,8 +77,13 @@ jobs:
           # a different hat: CI stayed green while nothing actually rendered.
           if 'font-family: var(--sn-inter-font) !important' not in stripped:
               fail('nothing applies --sn-inter-font — the app-wide rule is gone')
-          if not re.search(r'html\s*,\s*body\s*,\s*body\s*\*', stripped):
-              fail('the app-wide selector (html, body, body *) is missing')
+          # Scoped to Standard Notes' own page: SN loads the theme into every
+          # editor plugin's frame too, and a bare body * rule replaced the
+          # plugins' own fonts with Inter (fixed in 2.4.4).
+          if ':where(body:has(> #app-group-root)) *' not in stripped:
+              fail('the app-wide rule is no longer scoped to #app-group-root')
+          if re.search(r'\bbody\s+\*', stripped):
+              fail('a rule targets bare body *, which reaches into every editor plugin')
 
           # The app-wide rule must not swallow Standard Notes' Monospace
           # option again — before 2.4.3 it did, and the option did nothing.
@@ -90,7 +95,7 @@ jobs:
           # would push the count to 91 and break the digest above.
 
           # The section 5 opt-ins must stay commented out.
-          if 'font-family: revert' in stripped:
+          if 'font-family: var(--sn-stylekit-sans-serif-font) !important' in stripped:
               fail('the "confine Inter to the editor" opt-in block is uncommented')
 
           # Count braces on the stripped source; counting the raw file also

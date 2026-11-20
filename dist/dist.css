@@ -6,7 +6,7 @@
  * Author : Beshoy Sabri
  * License: MIT. Inter is OFL 1.1 — see
  *   https://beshoysabri.github.io/sn-dark-blue-theme/LICENSE-3RD-PARTY
- * Version: 2.4.3
+ * Version: 2.4.4
  *
  * FONTS — READ THIS. The desktop client sets
  *   Content-Security-Policy: default-src 'self' blob:
@@ -236,11 +236,18 @@
  * family has to be set on the elements themselves. v2.2.0 scoped
  * this to the Super editor only, which left the sidebar, note
  * list and menus on the system font.
+ *
+ * Standard Notes' own page only (since 2.4.4). SN also loads the
+ * active theme into every editor plugin's frame, so plugins can
+ * use its colours, and these rules came along: Inter, with
+ * !important, replaced each plugin's own type. The scope is the
+ * body that holds #app-group-root, SN's app root, which no plugin
+ * frame has; menus and dialogs are its siblings, so they stay
+ * covered. :where() keeps the specificity at zero, so the code rule below and the Monospace rule still win.
  * ============================================================== */
 
-html,
-body,
-body * {
+:where(body:has(> #app-group-root)),
+:where(body:has(> #app-group-root)) * {
   font-family: var(--sn-inter-font) !important;
   font-feature-settings: var(--sn-inter-features);
   font-variant-ligatures: contextual common-ligatures;
@@ -250,18 +257,13 @@ body * {
 }
 
 /* Code keeps a monospace face, and no contextual substitution, so
-   -> stays two characters where that actually matters. Listed
-   after the rule above so it wins at equal specificity.
+   -> stays two characters where that actually matters. It wins
+   over the rule above on specificity: :is() counts its attribute
+   selectors, :where() counts nothing.
    v2.2.0 matched [class*='code' i], which also caught prose like
    "Encoded"; requiring the hyphen keeps it to real class names. */
-pre,
-code,
-kbd,
-samp,
-pre *,
-code *,
-[class*='code-' i],
-[data-lexical-code] {
+:where(body:has(> #app-group-root)) :is(pre, code, kbd, samp, [class*='code-' i], [data-lexical-code]),
+:where(body:has(> #app-group-root)) :is(pre, code, kbd, samp, [class*='code-' i], [data-lexical-code]) * {
   font-family: var(--sn-inter-mono) !important;
   font-feature-settings: normal;
   font-variant-ligatures: none;
@@ -337,7 +339,7 @@ button.z-editor-title-bar.bg-danger {
  * ============================================================== */
 
 /* Inter runs a touch wide at heading sizes; tighten the tracking.
-:is(h1, h2, h3, h4, h5, h6) {
+:where(body:has(> #app-group-root)) :is(h1, h2, h3, h4, h5, h6) {
   letter-spacing: -0.018em;
 }
 */
@@ -367,21 +369,24 @@ button.z-editor-title-bar.bg-danger {
 :root {
   --sn-inter-features: 'cv05' 1;
 }
-html, body, body * {
+:where(body:has(> #app-group-root)),
+:where(body:has(> #app-group-root)) * {
   font-variant-ligatures: common-ligatures no-contextual;
 }
 */
 
 /* Confine Inter to the note editor again, as v2.2.0 did, leaving
-   the sidebar and menus on the system font — replaces section 3.
-html, body, body * {
-  font-family: revert !important;
+   the sidebar and menus on Standard Notes' own system font —
+   overrides section 3. The editor rule is wrapped in :where() so
+   code inside the editor stays monospace. (Before 2.4.4 this used
+   font-family: revert, which falls through to the browser's
+   default font instead.)
+:where(body:has(> #app-group-root)),
+:where(body:has(> #app-group-root)) * {
+  font-family: var(--sn-stylekit-sans-serif-font) !important;
 }
-#blocks-editor,
-#super-editor,
-.ContentEditable__root,
-[data-lexical-editor='true'],
-:is(#blocks-editor, #super-editor, .ContentEditable__root, [data-lexical-editor='true']) * {
+:where(body:has(> #app-group-root) :is(#super-editor-content, .ContentEditable__root, #note-text-editor)),
+:where(body:has(> #app-group-root) :is(#super-editor-content, .ContentEditable__root, #note-text-editor)) * {
   font-family: var(--sn-inter-font) !important;
 }
 */
